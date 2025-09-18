@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSE文言文語譯練習</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #8e44ad;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .section-title {
+            color: #8e44ad;
+            border-bottom: 2px solid #8e44ad;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .classical-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #6c3483;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .difficulty-btn {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .difficulty-btn.active {
+            background-color: #8e44ad;
+            color: white;
+        }
+        
+        .result-section {
+            margin-top: 20px;
+        }
+        
+        .score-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8e44ad;
+            margin-bottom: 10px;
+        }
+        
+        .comparison {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .comparison-box {
+            flex: 1;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .comparison-title {
+            font-weight: bold;
+            color: #8e44ad;
+            margin-bottom: 10px;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 0;
+        }
+        
+        .incorrect {
+            background-color: #ffcccc;
+            text-decoration: line-through;
+        }
+        
+        .correct {
+            background-color: #ccffcc;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .comparison {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DSE文言文語譯練習</h1>
+            <p class="description">提升文言文理解與翻譯能力，為DSE中文科做好準備</p>
+        </header>
+        
+        <div class="controls">
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" data-difficulty="easy">初級</button>
+                <button class="difficulty-btn" data-difficulty="medium">中級</button>
+                <button class="difficulty-btn" data-difficulty="hard">高級</button>
+            </div>
+            <button id="next-btn">下一題</button>
+        </div>
+        
+        <div class="main-content">
+            <div class="section">
+                <h2 class="section-title">文言文篇章</h2>
+                <div id="classical-text" class="classical-text">
+                    <!-- 文言文內容將由JavaScript動態生成 -->
+                </div>
+                
+                <h2 class="section-title">語譯練習</h2>
+                <textarea id="translation-input" placeholder="請在此輸入您的白話文翻譯..."></textarea>
+                <button id="check-btn">檢查答案</button>
+                
+                <div class="result-section">
+                    <div id="score" class="score-display">得分: 0</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">參考答案與解析</h2>
+                <div id="reference-answer" class="comparison-box">
+                    <p>提交您的翻譯後，這裡會顯示參考答案和解析。</p>
+                </div>
+                
+                <div class="comparison">
+                    <div class="comparison-box">
+                        <div class="comparison-title">您的翻譯</div>
+                        <div id="user-translation"></div>
+                    </div>
+                    <div class="comparison-box">
+                        <div class="comparison-title">參考翻譯</div>
+                        <div id="reference-translation"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 DSE文言文語譯練習應用 | 設計用於教育目的</p>
+        </footer>
+    </div>
+
+    <script>
+        // 題庫數據
+        const questions = {
+            easy: [
+                {
+                    classical: "子曰：「學而時習之，不亦說乎？有朋自遠方來，不亦樂乎？人不知而不慍，不亦君子乎？」",
+                    reference: "孔子說：「學習後時常溫習，不也很愉快嗎？有朋友從遠方來，不也很快樂嗎？別人不了解我，我也不生氣，不也是君子嗎？」",
+                    explanation: "這是《論語》的開篇，強調學習、交友和修養的重要性。"
+                },
+                {
+                    classical: "晉太元中，武陵人捕魚為業。緣溪行，忘路之遠近。忽逢桃花林，夾岸數百步，中無雜樹，芳草鮮美，落英繽紛。",
+                    reference: "東晉太元年間，武陵有一個以捕魚為業的人。有一天他沿著溪水划船而行，忘記了自己走了多遠。忽然遇到一片桃花林，生長在溪的兩岸，長達數百步，中間沒有別的樹，花草鮮嫩美麗，落花紛紛揚揚。",
+                    explanation: "這是《桃花源記》的開頭，描述漁人無意中發現桃花林的經過。"
+                }
+            ],
+            medium: [
+                {
+                    classical: "先帝創業未半而中道崩殂，今天下三分，益州疲弊，此誠危急存亡之秋也。然侍衛之臣不懈於內，忠志之士忘身於外者，蓋追先帝之殊遇，欲報之於陛下也。",
+                    reference: "先帝創立帝業還沒有完成一半，就中途去世了。現在天下分裂成三個國家，我們蜀漢國力困乏，這實在是危急存亡的時刻啊。然而侍衛大臣在朝廷內毫不懈怠，忠誠有志的將士在外面捨生忘死，大概是追念先帝對他們的特別待遇，想要報答給陛下啊。",
+                    explanation: "這是諸葛亮《出師表》的開頭，分析了當時的國家形勢和臣子的忠誠。"
+                },
+                {
+                    classical: "臣本布衣，躬耕於南陽，苟全性命於亂世，不求聞達於諸侯。先帝不以臣卑鄙，猥自枉屈，三顧臣於草廬之中，諮臣以當世之事，由是感激，遂許先帝以驅馳。",
+                    reference: "我本來是個平民，在南陽親自耕田，只希望在亂世裡苟全性命，不奢求在諸侯中揚名顯達。先帝不因我身世卑微，見識短淺，反而降低身份，委屈自己，三次到草廬裡來訪問我，向我徵詢對當今天下大事的意見，我因此十分感動，就答應為先帝奔走效勞。",
+                    explanation: "這段出自《出師表》，諸葛亮回憶劉備三顧茅廬的往事，表達感恩之情。"
+                }
+            ],
+            hard: [
+                {
+                    classical: "嗟乎！師道之不傳也久矣！欲人之無惑也難矣！古之聖人，其出人也遠矣，猶且從師而問焉；今之眾人，其下聖人也亦遠矣，而恥學於師。是故聖益聖，愚益愚。聖人之所以為聖，愚人之所以為愚，其皆出於此乎？",
+                    reference: "唉！從師學習的風尚已經失傳很久了！想要人們沒有疑惑很難啊！古代的聖人，他們超出一般人很遠，尚且跟從老師而請教；現在的一般人，他們才智低於聖人也很遠，卻以向老師學習為恥。因此聖人更加聖明，愚人更加愚昧。聖人之所以能成為聖人，愚人之所以成為愚人，大概都出於這個原因吧？",
+                    explanation: "這是韓愈《師說》中的一段，批判當時社會不重視從師學習的風氣。"
+                },
+                {
+                    classical: "夫人之相與，俯仰一世。或取諸懷抱，悟言一室之內；或因寄所托，放浪形骸之外。雖趣舍萬殊，靜躁不同，當其欣於所遇，暫得於己，快然自足，不知老之將至。",
+                    reference: "人與人相互交往，很快便度過一生。有的人把自己的胸懷抱負，在室內暢談；有的人就著自己所愛好的事物，寄託自己的情懷，不受拘束，放縱無羈地生活。雖然各有各的愛好，安靜與躁動各不相同，但當他們對所接觸的事物感到高興時，一時感到自得，感到高興和滿足，竟然不知道衰老將要到來。",
+                    explanation: "這段出自王羲之《蘭亭集序》，談論人生不同的處世態度和生命短暫的感慨。"
+                }
+            ]
+        };
+
+        // 應用狀態
+        let currentDifficulty = 'easy';
+        let currentQuestionIndex = 0;
+        let score = 0;
+        
+        // DOM元素
+        const classicalTextElement = document.getElementById('classical-text');
+        const translationInputElement = document.getElementById('translation-input');
+        const checkButton = document.getElementById('check-btn');
+        const nextButton = document.getElementById('next-btn');
+        const scoreElement = document.getElementById('score');
+        const referenceAnswerElement = document.getElementById('reference-answer');
+        const userTranslationElement = document.getElementById('user-translation');
+        const referenceTranslationElement = document.getElementById('reference-translation');
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        
+        // 初始化
+        function init() {
+            loadQuestion();
+            setupEventListeners();
+        }
+        
+        // 載入題目
+        function loadQuestion() {
+            const question = questions[currentDifficulty][currentQuestionIndex];
+            classicalTextElement.textContent = question.classical;
+            translationInputElement.value = '';
+            referenceAnswerElement.innerHTML = '<p>提交您的翻譯後，這裡會顯示參考答案和解析。</p>';
+            userTranslationElement.innerHTML = '';
+            referenceTranslationElement.innerHTML = '';
+        }
+        
+        // 設置事件監聽器
+        function setupEventListeners() {
+            checkButton.addEventListener('click', checkAnswer);
+            nextButton.addEventListener('click', nextQuestion);
+            
+            difficultyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 更新難度按鈕狀態
+                    difficultyButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新當前難度
+                    currentDifficulty = this.getAttribute('data-difficulty');
+                    currentQuestionIndex = 0;
+                    loadQuestion();
+                });
+            });
+        }
+        
+        // 檢查答案
+        function checkAnswer() {
+            const userTranslation = translationInputElement.value.trim();
+            if (!userTranslation) {
+                alert('請先輸入您的翻譯');
+                return;
+            }
+            
+            const question = questions[currentDifficulty][currentQuestionIndex];
+            
+            // 簡單的關鍵詞匹配（實際應用中可能需要更複雜的算法）
+            const keywords = getKeywords(question.reference);
+            let matchedKeywords = 0;
+            
+            keywords.forEach(keyword => {
+                if (userTranslation.includes(keyword)) {
+                    matchedKeywords++;
+                }
+            });
+            
+            // 計算得分
+            const accuracy = Math.min(100, Math.round((matchedKeywords / keywords.length) * 100));
+            score += accuracy;
+            scoreElement.textContent = `得分: ${score}`;
+            
+            // 顯示參考答案和解析
+            referenceAnswerElement.innerHTML = `
+                <p><strong>解析：</strong>${question.explanation}</p>
+            `;
+            
+            // 顯示對比
+            userTranslationElement.textContent = userTranslation;
+            referenceTranslationElement.textContent = question.reference;
+            
+            // 簡單的關鍵詞高亮（實際應用中需要更複雜的實現）
+            highlightText(userTranslationElement, keywords);
+            highlightText(referenceTranslationElement, keywords);
+        }
+        
+        // 獲取關鍵詞
+        function getKeywords(text) {
+            // 這裡使用簡單的分詞方法，實際應用中可能需要更複雜的分詞算法
+            const words = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()。，！？]/g, '').split(/\s+/);
+            return words.filter(word => word.length > 1).slice(0, 10); // 取前10個關鍵詞
+        }
+        
+        // 高亮文本中的關鍵詞
+        function highlightText(element, keywords) {
+            let html = element.textContent;
+            keywords.forEach(keyword => {
+                const regex = new RegExp(keyword, 'g');
+                html = html.replace(regex, `<span class="highlight">${keyword}</span>`);
+            });
+            element.innerHTML = html;
+        }
+        
+        // 下一題
+        function nextQuestion() {
+            currentQuestionIndex = (currentQuestionIndex + 1) % questions[currentDifficulty].length;
+            loadQuestion();
+        }
+        
+        // 初始化應用
+        init();
+    </script>
+</body>
+</html>
